@@ -8,18 +8,23 @@ namespace HrAssistant.Agents
     {
         public static ChatClient Create(IConfiguration config)
         {
-            var client = new OpenAIClient(
-                new ApiKeyCredential(
-                    config["Nvidia:ApiKey"]!),
+            var apiKey = config["Nvidia:ApiKey"]
+                ?? throw new InvalidOperationException("NVIDIA API key is missing.");
 
+            var endpoint = config["Nvidia:Endpoint"]
+                ?? throw new InvalidOperationException("NVIDIA endpoint is missing.");
+
+            var model = config["Nvidia:Model"]
+                ?? throw new InvalidOperationException("NVIDIA model is missing.");
+
+            var client = new OpenAIClient(
+                new ApiKeyCredential(apiKey),
                 new OpenAIClientOptions
                 {
-                    Endpoint = new Uri(
-                        config["Nvidia:Endpoint"]!)
+                    Endpoint = new Uri(endpoint)
                 });
 
-            return client.GetChatClient(
-                config["Nvidia:Model"]!);
+            return client.GetChatClient(model);
         }
     }
 }

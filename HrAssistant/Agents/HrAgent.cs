@@ -1,6 +1,7 @@
 ﻿using HrAssistant.Services;
 using OpenAI.Chat;
 using System.Text.Json;
+using System.Linq;
 
 namespace HrAssistant.Agents
 {
@@ -54,7 +55,7 @@ namespace HrAssistant.Agents
 
             if (completion.ToolCalls.Count == 0)
             {
-                return completion.Content[0].Text;
+                return GetTextFromCompletion(completion);
             }
 
             messages.Add(
@@ -103,7 +104,7 @@ namespace HrAssistant.Agents
                     case "SearchPolicy":
 
                         var policy =
-                            _tools.Policy
+                            await _tools.Policy
                                 .SearchPolicyAsync(
                                     arguments!["question"]);
 
@@ -121,10 +122,24 @@ namespace HrAssistant.Agents
                     messages,
                     options);
 
-            return finalResponse
-                .Value
-                .Content[0]
-                .Text;
+            return GetTextFromCompletion(finalResponse.Value);
+        }
+
+
+        private static string GetTextFromCompletion(ChatCompletion completion)
+        {
+            if (completion?.Content == null)
+                return string.Empty;
+
+            // Prefer the first non-empty text content
+            var firstText = completion.Content
+                .Select(c => c.Text)
+                .FirstOrDefault(t => !string.IsNullOrEmpty(t));        
+
+
+            return firstText ?? string.Empty;
+
+           
         }
 
 

@@ -1,0 +1,79 @@
+<main class="assistant-shell">
+  <section class="assistant-window" aria-labelledby="assistant-title">
+    <header class="assistant-header">
+      <div class="brand-mark" aria-hidden="true">✦</div>
+      <div>
+        <p class="eyebrow">People operations, made simple</p>
+        <h1 id="assistant-title">HR Assistant</h1>
+        <p class="subtitle">Your intelligent HR support assistant</p>
+      </div>
+      <div class="status-pill" aria-label="Assistant online">
+        <span class="status-dot"></span>
+        Online
+      </div>
+    </header>
+
+    <div #messageList class="message-list" aria-live="polite" aria-label="Conversation">
+      @for (message of messages; track message.timestamp.getTime()) {
+        <article class="message-row" [class.user-row]="message.role === 'user'">
+          <div class="avatar" [class.user-avatar]="message.role === 'user'" aria-hidden="true">
+            @if (message.role === 'user') { You } @else { ✦ }
+          </div>
+          <div class="message-content">
+            <div class="message-meta">
+              <span>{{ message.role === 'user' ? 'You' : 'AI Assistant' }}</span>
+              <time>{{ message.timestamp | date: 'h:mm a' }}</time>
+            </div>
+            <p class="message-bubble">{{ message.content }}</p>
+          </div>
+        </article>
+      }
+
+      @if (isLoading) {
+        <article class="message-row" aria-label="AI Assistant is thinking">
+          <div class="avatar" aria-hidden="true">✦</div>
+          <div class="message-content">
+            <div class="message-meta"><span>AI Assistant</span></div>
+            <div class="message-bubble thinking-bubble">
+              <span>Thinking</span>
+              <span class="thinking-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            </div>
+          </div>
+        </article>
+      }
+
+      @if (messages.length === 1 && !isLoading) {
+        <div class="suggestions" aria-label="Suggested questions">
+          <p>Start with a question</p>
+          <div class="suggestion-grid">
+            @for (suggestion of suggestions; track suggestion) {
+              <button type="button" class="suggestion-button" (click)="useSuggestion(suggestion)">
+                {{ suggestion }}
+                <span aria-hidden="true">↗</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <form class="composer" (ngSubmit)="sendMessage()">
+      <label class="sr-only" for="question">Ask anything about HR</label>
+      <textarea
+        id="question"
+        [formControl]="questionControl"
+        placeholder="Ask anything about HR..."
+        rows="1"
+        maxlength="1000"
+        (keydown)="handleInputKeydown($event)"></textarea>
+      <div class="composer-actions">
+        <span class="composer-hint">Enter to send · Shift + Enter for a new line</span>
+        <button class="send-button" type="submit" [disabled]="isLoading || questionControl.invalid || !questionControl.value.trim()">
+          <span>{{ isLoading ? 'Waiting' : 'Send' }}</span>
+          <span aria-hidden="true">↑</span>
+        </button>
+      </div>
+    </form>
+    <p class="privacy-note">Answers are generated from your organization's HR knowledge base.</p>
+  </section>
+</main>

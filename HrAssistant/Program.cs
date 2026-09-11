@@ -4,6 +4,15 @@ using HrAssistant.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularDevelopment", policy =>
+    {
+        policy.WithOrigins("http://localhost:58699")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 // Services
 
@@ -15,7 +24,7 @@ builder.Services.AddScoped<PdfService>();
 
 builder.Services.AddScoped<TextChunkService>();
 
-builder.Services.AddSingleton<NvidiaEmbeddingService>();
+builder.Services.AddHttpClient<NvidiaEmbeddingService>();
 
 builder.Services.AddScoped<VectorStoreService>();
 
@@ -76,6 +85,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AngularDevelopment");
 
 app.UseAuthorization();
 
