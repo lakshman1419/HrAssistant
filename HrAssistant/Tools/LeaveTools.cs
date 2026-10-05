@@ -14,11 +14,12 @@ namespace HrAssistant.Tools
         }
 
 
-        public async Task<int> GetLeaveBalanceAsync(
-            string employeeId)
+        public async Task<string> GetLeaveBalanceAsync(
+            string employeeId,
+            string? leaveType = null)
         {
             return await _leaveService
-                .GetLeaveBalanceAsync(employeeId);
+                .GetLeaveBalanceAsync(employeeId, leaveType);
         }
     }
 }

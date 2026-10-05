@@ -57,7 +57,7 @@
       }
     </div>
 
-    <form class="composer" (ngSubmit)="sendMessage()">
+    <form class="composer">
       <label class="sr-only" for="question">Ask anything about HR</label>
       <textarea
         id="question"
@@ -68,7 +68,7 @@
         (keydown)="handleInputKeydown($event)"></textarea>
       <div class="composer-actions">
         <span class="composer-hint">Enter to send · Shift + Enter for a new line</span>
-        <button class="send-button" type="submit" [disabled]="isLoading || questionControl.invalid || !questionControl.value.trim()">
+        <button class="send-button" type="button" (click)="sendMessage()" [disabled]="isLoading || questionControl.invalid || !questionControl.value.trim()">
           <span>{{ isLoading ? 'Waiting' : 'Send' }}</span>
           <span aria-hidden="true">↑</span>
         </button>

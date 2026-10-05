@@ -8,7 +8,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularDevelopment", policy =>
     {
-        policy.WithOrigins("http://localhost:56675")
+        policy.WithOrigins("http://localhost:4200")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -77,11 +77,32 @@ using (var scope = app.Services.CreateScope())
     var pdfService = scope.ServiceProvider.GetRequiredService<PdfService>();
     var chunkService = scope.ServiceProvider.GetRequiredService<TextChunkService>();
     var vectorStore = scope.ServiceProvider.GetRequiredService<VectorStoreService>();
+    var documentsDirectory = Path.Combine(app.Environment.ContentRootPath, "Documents");
 
-    var text = pdfService.ExtractText("Documents/Leave-Policy.pdf");
-    var chunks = chunkService.Split(text);
+    foreach (var pdfPath in Directory.EnumerateFiles(
+                 documentsDirectory,
+                 "*.pdf",
+                 SearchOption.TopDirectoryOnly))
+    {
+        try
+        {
+            var text = pdfService.ExtractText(pdfPath);
+            var chunks = chunkService.Split(text);
 
-    await vectorStore.AddDocumentAsync(chunks);
+            if (chunks.Count == 0)
+            {
+                app.Logger.LogWarning("No text was extracted from policy document {DocumentPath}.", pdfPath);
+                continue;
+            }
+
+            await vectorStore.AddDocumentAsync(chunks, Path.GetFileName(pdfPath));
+            app.Logger.LogInformation("Indexed policy document {DocumentPath} with {ChunkCount} chunks.", pdfPath, chunks.Count);
+        }
+        catch (Exception exception)
+        {
+            app.Logger.LogError(exception, "Failed to index policy document {DocumentPath}.", pdfPath);
+        }
+    }
 }
 
 app.UseHttpsRedirection();

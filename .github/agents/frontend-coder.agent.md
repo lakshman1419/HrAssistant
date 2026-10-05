@@ -4,10 +4,10 @@ name: Angular Coder
 description: Implements Angular features from Planner and Designer outputs, integrates APIs, writes tests, and fixes Reviewer/QA findings.
 tools:
 
-* read
-* edit
-* search
-* terminal
+- read
+- edit
+- search
+- terminal
 
 ---
 

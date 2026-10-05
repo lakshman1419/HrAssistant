@@ -4,6 +4,9 @@ namespace HrAssistant.Services
 {
     public class VectorStoreService
     {
+        public const string NoRelevantPolicyMatch = "NO_RELEVANT_HR_POLICY_MATCH";
+        private const float MinimumPolicySimilarity = 0.35f;
+
         private readonly NvidiaEmbeddingService _embeddingService;
 
         private readonly List<DocumentChunk> _documents = new();
@@ -16,16 +19,21 @@ namespace HrAssistant.Services
             _embeddingService = embeddingService;
         }
 
-        public async Task AddDocumentAsync(List<string> chunks)
+        public async Task AddDocumentAsync(
+            List<string> chunks,
+            string sourceDocument)
         {
-            foreach (var chunk in chunks)
+            for (var chunkIndex = 0; chunkIndex < chunks.Count; chunkIndex++)
             {
+                var chunk = chunks[chunkIndex];
                 var embedding =
                     await _embeddingService.CreateEmbedding(chunk);
 
                 _documents.Add(new DocumentChunk
                 {
                     Id = _nextId++,
+                    SourceDocument = sourceDocument,
+                    ChunkIndex = chunkIndex,
                     Text = chunk,
                     Embedding = embedding
                 });
@@ -40,7 +48,7 @@ namespace HrAssistant.Services
             var queryEmbedding =
                 await _embeddingService.CreateEmbedding(question);
 
-            var results =
+            var rankedResults =
                 _documents
                     .Select(d => new
                     {
@@ -50,8 +58,21 @@ namespace HrAssistant.Services
                             d.Embedding)
                     })
                     .OrderByDescending(x => x.Score)
-                    .Take(3)
-                    .Select(x => x.Chunk.Text);
+                    .ToList();
+
+            if (rankedResults.Count == 0
+                || rankedResults[0].Score < MinimumPolicySimilarity)
+            {
+                return NoRelevantPolicyMatch;
+            }
+
+            var bestMatch = rankedResults[0].Chunk;
+            var results = _documents
+                .Where(document => document.SourceDocument == bestMatch.SourceDocument
+                    && document.ChunkIndex >= bestMatch.ChunkIndex - 1
+                    && document.ChunkIndex <= bestMatch.ChunkIndex + 1)
+                .OrderBy(document => document.ChunkIndex)
+                .Select(document => document.Text);
 
             return string.Join("\n\n", results);
         }

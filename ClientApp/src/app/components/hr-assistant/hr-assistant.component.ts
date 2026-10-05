@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ChatMessage } from '../../models/chat-message.model';
 import { HrAssistantService } from '../../services/hr-assistant.service';
@@ -37,6 +37,7 @@ export class HrAssistantComponent {
   isLoading = false;
 
   private readonly hrAssistantService = inject(HrAssistantService);
+  private readonly changeDetector = inject(ChangeDetectorRef);
 
   sendMessage(): void {
     const question = this.questionControl.value.trim();
@@ -58,6 +59,7 @@ export class HrAssistantComponent {
           timestamp: new Date()
         });
         this.isLoading = false;
+        this.changeDetector.markForCheck();
         this.scrollToLatest();
       },
       error: (error: HttpErrorResponse) => {
@@ -68,6 +70,7 @@ export class HrAssistantComponent {
           timestamp: new Date()
         });
         this.isLoading = false;
+        this.changeDetector.markForCheck();
         this.scrollToLatest();
       }
     });

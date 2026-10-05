@@ -6,10 +6,10 @@ description: Coordinates Planner, Designer, Coder, Reviewer and QA agents to bui
 
 tools:
 
-* read
-* edit
-* search
-* terminal
+- read
+- edit
+- search
+- terminal
 
 ---
 
