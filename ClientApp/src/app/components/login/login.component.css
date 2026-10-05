@@ -1,0 +1,74 @@
+:host { display: block; min-height: 100%; }
+
+.login-shell {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 32px 20px;
+  background: #eef2ed;
+  background-image: linear-gradient(120deg, rgba(255, 255, 255, .75), transparent 44%), linear-gradient(25deg, transparent 72%, rgba(209, 224, 211, .5));
+}
+
+.login-surface {
+  width: min(420px, 100%);
+  padding: 40px 42px 42px;
+  background: rgba(255, 255, 255, .92);
+  border: 1px solid rgba(34, 58, 45, .13);
+  border-radius: 15px;
+  box-shadow: 0 24px 70px rgba(35, 59, 43, .14);
+}
+
+.login-brand { display: grid; justify-items: center; text-align: center; }
+.brand-mark {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 18px;
+  place-items: center;
+  color: #f5f7ef;
+  background: #1d4532;
+  border-radius: 12px;
+  font-size: 22px;
+}
+.eyebrow { margin: 0 0 6px; color: #6c7c71; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+h1 { margin: 0; color: #183326; font-family: Georgia, 'Times New Roman', serif; font-size: 32px; font-weight: 500; line-height: 1.1; }
+.subtitle { margin: 8px 0 30px; color: #718076; font-size: 14px; }
+
+form { display: grid; gap: 18px; }
+.field-group { display: grid; gap: 7px; }
+label { color: #304238; font-size: 12px; font-weight: 700; }
+input {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 12px;
+  color: #213c2c;
+  background: #fff;
+  border: 1px solid #ceddcf;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 14px;
+}
+input:focus-visible, .submit-button:focus-visible { outline: 3px solid rgba(63, 137, 85, .35); outline-offset: 2px; }
+input[aria-invalid="true"] { border-color: #aa554c; }
+.field-error, .error-message { margin: 0; color: #a13f37; font-size: 12px; line-height: 1.4; }
+.form-feedback { min-height: 18px; }
+.pending-message { margin: 0; color: #55745d; font-size: 12px; }
+.submit-button {
+  width: 100%;
+  min-height: 46px;
+  color: #fff;
+  background: #1d4532;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+}
+.submit-button:hover:not(:disabled) { background: #2a6347; }
+.submit-button:disabled { background: #91a997; cursor: wait; }
+
+@media (max-width: 480px) {
+  .login-shell { min-height: 100dvh; padding: 16px; }
+  .login-surface { padding: 34px 24px 30px; }
+}

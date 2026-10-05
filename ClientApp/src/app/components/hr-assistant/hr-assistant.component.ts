@@ -2,7 +2,11 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
 import { ChatMessage } from '../../models/chat-message.model';
+import type { AuthUserProfile } from '../../models/auth.model';
+import { AuthService } from '../../services/auth.service';
 import { HrAssistantService } from '../../services/hr-assistant.service';
 
 @Component({
@@ -35,9 +39,21 @@ export class HrAssistantComponent {
   ];
 
   isLoading = false;
+  readonly currentUser: AuthUserProfile | null;
 
   private readonly hrAssistantService = inject(HrAssistantService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   private readonly changeDetector = inject(ChangeDetectorRef);
+
+  constructor() {
+    this.currentUser = this.authService.currentUser;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    void this.router.navigate(['/login']);
+  }
 
   sendMessage(): void {
     const question = this.questionControl.value.trim();
@@ -63,10 +79,12 @@ export class HrAssistantComponent {
         this.scrollToLatest();
       },
       error: (error: HttpErrorResponse) => {
-        console.error('HR Assistant API error:', error);
+        const content = error.status === 400
+          ? "I couldn't process that request. Please check your wording and try again."
+          : 'The assistant is temporarily unavailable. Please try again.';
         this.messages.push({
           role: 'assistant',
-          content: "Sorry, I couldn't process your request right now. Please try again.",
+          content,
           timestamp: new Date()
         });
         this.isLoading = false;

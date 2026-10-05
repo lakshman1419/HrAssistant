@@ -71,27 +71,36 @@ h1 {
   font-size: 13px;
 }
 
-.status-pill {
+.user-profile {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 12px;
   margin-left: auto;
-  padding: 8px 11px;
-  color: #366048;
-  background: #edf6ed;
-  border: 1px solid #d9ead9;
-  border-radius: 999px;
-  font-size: 12px;
+}
+
+.user-identity {
+  display: grid;
+  gap: 2px;
+  text-align: right;
+}
+
+.user-name { color: #304238; font-size: 12px; font-weight: 700; }
+.user-role { color: #718076; font-size: 10px; }
+
+.logout-button {
+  padding: 8px 10px;
+  color: #315a40;
+  background: #fff;
+  border: 1px solid #cdddcf;
+  border-radius: 7px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
   font-weight: 700;
 }
 
-.status-dot {
-  width: 7px;
-  height: 7px;
-  background: #3eae68;
-  border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(62, 174, 104, .13);
-}
+.logout-button:hover { background: #f2f8f1; }
+.logout-button:focus-visible { outline: 3px solid rgba(63, 137, 85, .32); outline-offset: 2px; }
 
 .message-list {
   overflow-y: auto;
@@ -318,11 +327,13 @@ textarea:focus { outline: 0; }
   .assistant-shell { padding: 0; }
   .assistant-window { height: 100vh; min-height: 0; border: 0; border-radius: 0; }
   .assistant-header { padding: 19px 17px 17px; }
+  .assistant-header { flex-wrap: wrap; }
+  .assistant-header > div:nth-child(2) { flex: 1; min-width: 0; }
+  .user-profile { width: 100%; justify-content: flex-end; margin: 0; }
   .brand-mark { width: 36px; height: 36px; border-radius: 10px; }
   .eyebrow { font-size: 9px; }
   h1 { font-size: 25px; }
   .subtitle { font-size: 12px; }
-  .status-pill { padding: 6px 8px; font-size: 10px; }
   .message-list { padding: 25px 16px 26px; }
   .message-row { gap: 9px; margin-bottom: 20px; }
   .message-content { max-width: calc(100% - 40px); }

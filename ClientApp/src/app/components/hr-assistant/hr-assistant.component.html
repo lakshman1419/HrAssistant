@@ -7,10 +7,15 @@
         <h1 id="assistant-title">HR Assistant</h1>
         <p class="subtitle">Your intelligent HR support assistant</p>
       </div>
-      <div class="status-pill" aria-label="Assistant online">
-        <span class="status-dot"></span>
-        Online
-      </div>
+      @if (currentUser) {
+        <div class="user-profile" aria-label="Signed-in profile">
+          <span class="user-identity">
+            <span class="user-name">{{ currentUser.displayName }}</span>
+            <span class="user-role">{{ currentUser.role }}</span>
+          </span>
+          <button class="logout-button" type="button" (click)="logout()">Sign out</button>
+        </div>
+      }
     </header>
 
     <div #messageList class="message-list" aria-live="polite" aria-label="Conversation">

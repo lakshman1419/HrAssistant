@@ -1,9 +1,14 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
+import { appRoutes } from './app.routes';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ imports: [AppComponent] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [AppComponent],
+      providers: [provideRouter(appRoutes)]
+    }).compileComponents();
   });
 
   it('creates the application shell', () => {

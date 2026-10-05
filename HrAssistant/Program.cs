@@ -1,6 +1,8 @@
 using HrAssistant.Agents;
+using HrAssistant.Models;
 using HrAssistant.Services;
 using HrAssistant.Tools;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +59,12 @@ builder.Services.AddSingleton(provider =>
 // HR Agent
 
 builder.Services.AddScoped<HrAgent>();
+
+builder.Services.AddSingleton<IValidateOptions<AuthenticationOptions>, AuthenticationOptionsValidator>();
+builder.Services.AddOptions<AuthenticationOptions>()
+    .Bind(builder.Configuration.GetSection(AuthenticationOptions.SectionName))
+    .ValidateOnStart();
+builder.Services.AddSingleton<IUserAuthenticationService, InMemoryUserAuthenticationService>();
 
 
 builder.Services.AddControllers();
